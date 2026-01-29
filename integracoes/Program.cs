@@ -1,4 +1,4 @@
-using integracoes.Data;
+﻿using integracoes.Data;
 using integracoes.Services.Consultas;
 using integracoes.Services.Pagamentos;
 using MercadoPago.Client.Payment;
@@ -13,17 +13,26 @@ using Polly.Registry;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbContext com retry configurado explicitamente
 builder.Services.AddDbContext<AppDbContext>(options =>
+{
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlOptions => sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 6,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: new[] { 4060, 10928, 10929, 40197, 40501, 40613 }
-        )
-    ));
-    
+        sql =>
+        {
+            // ⏱ Timeout curto para não travar a API
+            sql.CommandTimeout(10);
+
+            // 🔁 Retry CONTROLADO
+            sql.EnableRetryOnFailure(
+                maxRetryCount: 3,
+                maxRetryDelay: TimeSpan.FromSeconds(2),
+                errorNumbersToAdd: null
+            );
+        }
+    );
+});
+
+
 // Add services to the container.
 var mpToken = builder.Configuration["MercadoPago:AccessToken"];
 MercadoPagoConfig.AccessToken = mpToken;
@@ -35,14 +44,19 @@ builder.Services.AddScoped<IPagamentoService, PagamentoService>();
 // HttpClient nomeado para Sinesp com Polly (retry exponencial + circuit breaker)
 builder.Services.AddHttpClient("SinespClient", client =>
 {
-    client.Timeout = TimeSpan.FromSeconds(30);
+    client.Timeout = TimeSpan.FromSeconds(10);
 })
 .AddPolicyHandler(HttpPolicyExtensions
     .HandleTransientHttpError()
-    .CircuitBreakerAsync(
-        handledEventsAllowedBeforeBreaking: 3,
-        durationOfBreak: TimeSpan.FromSeconds(30)
-    ));
+    .WaitAndRetryAsync(3, retry =>
+        TimeSpan.FromMilliseconds(200 * retry)
+    )
+)
+.AddPolicyHandler(
+    (IAsyncPolicy<HttpResponseMessage>)Policy.Handle<HttpRequestException>()
+        .CircuitBreakerAsync(3, TimeSpan.FromSeconds(30))
+);
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
