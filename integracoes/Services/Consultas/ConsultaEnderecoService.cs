@@ -44,7 +44,7 @@ namespace integracoes.Services.Consultas
             {
                 _logger.LogError(ex, "Erro ao consultar CEP {Cep} no banco", cep);
             }
-
+                
 
             if (consultaExistente != null)
                 return consultaExistente;
