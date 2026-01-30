@@ -2,7 +2,7 @@
 
 namespace integracoes.Models
 {
-    public class ConsultaEndereco
+    public class ConsultasEnderecos
     {
         [Key]
         public int Id { get; set; }
