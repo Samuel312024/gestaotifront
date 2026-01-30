@@ -5,6 +5,6 @@ namespace integracoes.Services.Consultas
 {
     public interface IConsultaEnderecoService
     {
-        Task<ConsultaEndereco?> BuscarPorCepAsync(string cep);
+        Task<ConsultasEnderecos?> BuscarPorCepAsync(string cep);
     }
 }

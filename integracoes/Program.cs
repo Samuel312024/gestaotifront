@@ -46,17 +46,22 @@ builder.Services.AddHttpClient("SinespClient", client =>
 {
     client.Timeout = TimeSpan.FromSeconds(10);
 })
-.AddPolicyHandler(HttpPolicyExtensions
-    .HandleTransientHttpError()
-    .WaitAndRetryAsync(3, retry =>
-        TimeSpan.FromMilliseconds(200 * retry)
-    )
+.AddPolicyHandler(
+    HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .WaitAndRetryAsync(
+            retryCount: 3,
+            sleepDurationProvider: retry => TimeSpan.FromMilliseconds(200 * retry)
+        )
 )
 .AddPolicyHandler(
-    (IAsyncPolicy<HttpResponseMessage>)Policy.Handle<HttpRequestException>()
-        .CircuitBreakerAsync(3, TimeSpan.FromSeconds(30))
+    HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .CircuitBreakerAsync(
+            handledEventsAllowedBeforeBreaking: 3,
+            durationOfBreak: TimeSpan.FromSeconds(30)
+        )
 );
-
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

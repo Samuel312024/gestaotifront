@@ -11,7 +11,7 @@ namespace integracoes.Data
 
         // Adicione DbSets para suas entidades aqui (exemplos iniciais)
         public DbSet<Pagamento> Pagamentos { get; set; }
-        public DbSet<ConsultaEndereco> ConsultasEnderecos { get; set; }
+        public DbSet<ConsultasEnderecos> ConsultasEnderecos { get; set; }
         public DbSet<integracoes.Models.ConsultaPlaca> ConsultasPlacas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
