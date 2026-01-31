@@ -25,11 +25,6 @@ public class ConsultasController : ControllerBase
         return Ok(resultado);
     }
 
-    [HttpGet("placa/{placa}")]
-    public async Task<IActionResult> BuscarPlaca(string placa)
-    {
-        var resultado = await _placaService.BuscarPorPlacaAsync(placa);
-        if (resultado == null) return NotFound("Placa não encontrada ou inválida");
-        return Ok(resultado);
-    }
+        
+
 }

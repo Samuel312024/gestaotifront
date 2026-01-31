@@ -1,4 +1,5 @@
-﻿using integracoes.Models;
+﻿using integracoes.Controllers;
+using integracoes.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace integracoes.Data
@@ -10,9 +11,11 @@ namespace integracoes.Data
         }
 
         // Adicione DbSets para suas entidades aqui (exemplos iniciais)
-        public DbSet<Pagamento> Pagamentos { get; set; }
+        //public DbSet<Pagamento> Pagamentos { get; set; }
         public DbSet<ConsultasEnderecos> ConsultasEnderecos { get; set; }
         public DbSet<integracoes.Models.ConsultaPlaca> ConsultasPlacas { get; set; }
+        public DbSet<RawDataDto> RawDatas { get; set; }
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,4 +28,6 @@ namespace integracoes.Data
             modelBuilder.Entity<ConsultaPlaca>().HasNoKey();
         }
     }
+
+    
 }

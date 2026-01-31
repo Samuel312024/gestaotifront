@@ -10,6 +10,8 @@ using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
 using Polly.Registry;
+using integracoes.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +41,7 @@ MercadoPagoConfig.AccessToken = mpToken;
 builder.Services.AddSingleton<PaymentClient>();
 builder.Services.AddScoped<IConsultaEnderecoService, ConsultaEnderecoService>();
 builder.Services.AddScoped<IConsultaPlacaService, ConsultaPlacaService>();
-builder.Services.AddScoped<IPagamentoService, PagamentoService>();
+//builder.Services.AddScoped<IPagamentoService, PagamentoService>();
 
 // HttpClient nomeado para Sinesp com Polly (retry exponencial + circuit breaker)
 builder.Services.AddHttpClient("SinespClient", client =>
