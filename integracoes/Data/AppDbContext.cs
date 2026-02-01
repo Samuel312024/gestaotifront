@@ -14,11 +14,13 @@ namespace integracoes.Data
         //public DbSet<Pagamento> Pagamentos { get; set; }
         public DbSet<ConsultasEnderecos> ConsultasEnderecos { get; set; }
         public DbSet<integracoes.Models.ConsultaPlaca> ConsultasPlacas { get; set; }
-        public DbSet<RawDataDto> RawDatas { get; set; }
-       
+        public DbSet<RawData> RawDatas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<RawDataDto>()
+                .HasIndex(x => x.Cpf)
+                .IsUnique();
             base.OnModelCreating(modelBuilder);
 
             // Configurações globais opcionais (ex.: case-insensitive para SQL Server)
