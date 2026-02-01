@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using integracoes.Data;
 using integracoes.Models;
+using integracoes.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -22,26 +23,44 @@ namespace integracoes.Controllers
             _context = context;
         }
 
-        [HttpPost("guardar")]
-        public async Task<IActionResult> GuardarDados([FromBody] GuardarDadosRequest request)
-        {
-            var entry = new RawDataDto
+ 
+            [HttpPost("guardar")]
+            public async Task<IActionResult> GuardarDados([FromBody] GuardarDadosRequest request)
             {
-                Payload = System.Text.Json.JsonSerializer.Serialize(request.Nome),
-                Cpf = request.Cpf,
-                ReceivedAt = DateTime.UtcNow
-            };
+                if (request == null)
+                    return BadRequest("Requisição inválida.");
 
-            if (!Regex.IsMatch(request.Cpf ?? "", @"^\d{11}$"))
-            {
-                return BadRequest("CPF inválido. Use apenas números (11 dígitos).");
+                // 🔢 Remove tudo que não for número
+                var cpf = CpfHelper.SomenteNumeros(request.Cpf);
+
+                // ✅ Valida CPF real
+                if (!CpfHelper.CpfValido(cpf))
+                    return BadRequest("CPF inválido.");
+
+                // 🔁 Verifica duplicidade no banco
+                bool cpfJaExiste = await _context.RawDatas
+                    .AnyAsync(x => x.Cpf == cpf);
+
+                if (cpfJaExiste)
+                    return Conflict("CPF já cadastrado.");
+
+                var entry = new RawData
+                {
+                    Payload = System.Text.Json.JsonSerializer.Serialize(request.Nome),
+                    ReceivedAt = DateTime.UtcNow,
+                    Cpf = cpf
+                };
+
+                _context.RawDatas.Add(entry);
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    Mensagem = "Dados guardados com sucesso",
+                    entry.Id
+                });
             }
-
-            _context.RawDatas.Add(entry);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Mensagem = "Dados guardados com sucesso", entry.Id });
-        }
+      
 
         [HttpDelete("limpar")]
         public async Task<IActionResult> LimparDados()

@@ -3,7 +3,7 @@
     public class GuardarDadosRequest
     {
         public object Nome { get; set; }
-        public string Cpf { get; set; }
+        public string Cpf { get; set; } = string.Empty;
     }
 }
 
