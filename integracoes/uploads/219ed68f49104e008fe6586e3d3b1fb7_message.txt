@@ -1,0 +1,164 @@
+USE [ATWeb]
+GO
+
+/****** Object:  View [dbo].[vwWorkOrder]    Script Date: 22/12/2025 16:47:47 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+--ALTER VIEW [dbo].[vwWorkOrder]
+--AS
+SELECT
+    CASE WHEN OS.sequencia IS NULL 
+        THEN 'SRV-ATWEB-' + OS.id 
+        ELSE 'SRV-ATWEB-' + OS.id + '-' + OS.sequencia
+    END AS ExternalId__c,
+
+    ---------------------------------------------------------
+    -- CAMPOS ORIGINAIS (SEM ALTERAÇÃO)
+    ---------------------------------------------------------
+    ISNULL(ISNULL(OSU.IDERP, OSU.Email), OS.usuarioidresponsavel) AS [Owner],
+    ISNULL(ISNULL(OSUC.IDERP, OSUC.Email), OS.usuarioidresponsavel) AS [CreateOS],
+    'ATD-ATWEB-' + a.numeroprotocolo AS CaseId,
+    'CLI-' + ERC.ExternalId AS Account,
+    OS.dataabertura AS StartDate,
+    OS.datafechamento AS EndDate,
+    CASE OS.[status] WHEN 'Finalizada (Sem Resolução)' THEN 'Canceled'
+        WHEN 'Finalizada' THEN 'Completed'
+        WHEN 'Finalizada (Cancelada pelo Posto)' THEN 'Canceled'
+        WHEN 'Finalizada (Cancelada pelo Fabricante)' THEN 'Canceled'
+        WHEN 'Finalizada (Reprovada Auditoria)' THEN 'Canceled'
+    END AS [Status],
+    OS.obs AS [Description],
+    'Medium' AS [Priority],
+    OSP.SKU AS AssetId,
+    OSAC.IDERP AS ContactId,
+    'BRL' AS CurrencyIsoCode
+
+    ---------------------------------------------------------
+    -- CAMPOS FALTANTES – PREENCHIDOS CONFORME DIAGRAMA
+    ---------------------------------------------------------
+
+    -- Número de Série (vem de EstruturasVersionadasCapa.loteserie)
+    --EVC.loteserie AS NumeroDeSerie,
+
+    -- Data de Emissão da Nota Fiscal da Fábrica (EVC.dataemissaonf ou nome equivalente)
+    --EVC.datafaturamento AS DataEmissaoNotaFiscal,
+
+    -- Nota Fiscal da Fábrica (campo direto na tabela de estrutura versionada)
+    --EVC.notafiscal AS NotaFiscalFabrica,
+
+    -- Nome do Produto (Produtos.descricao)
+    --P.descricao AS NomeProduto,
+
+    -- Finalidade da OS (OrdensServicos.finalidadeId → Finalidade.descricao)
+    --F.descricao AS Finalidade,
+
+    -- Assinatura (último apontamento do tipo "Apontamento")
+    --OSA.assinaturaconsumidorfileid AS Assinatura,
+
+    -- Observação Técnica (OrdensServicos.obs)
+    --OSPO.relato AS ObservacaoTecnica,
+
+    -- Defeito Constatado (DefeitosConstatados.descricao)
+    --DC.descricao AS DefeitoConstatado
+
+
+FROM OrdensServicos OS
+LEFT JOIN Atendimentos A
+    ON OS.atendimentoid = A.id
+LEFT JOIN vwConsumidorOS OSC
+    ON OS.id = OSC.ordemid
+LEFT JOIN vwUsuarios OSU
+    ON OS.usuarioidresponsavel = OSU.UsuarioId
+LEFT JOIN vwUsuarios OSUC
+    ON OS.usuarioidabertura = OSUC.UsuarioId
+LEFT JOIN vwRevendedorOS OSR
+    ON OS.id = OSR.ordemid
+LEFT JOIN vwContatos OSAC
+    ON OS.assinaturacontatoid = OSAC.id 
+LEFT JOIN vwDefeitosReclamadosOS DROS 
+    ON OS.id = DROS.ordemid
+LEFT JOIN vwCamposPersonalizadosAtendimentosOS CPA
+    ON OS.atendimentoid = CPA.AtendimentoId
+    AND CPA.CampoId = 13
+LEFT JOIN vwPecasDefeitos PD
+    ON PD.OrdemServicoID = OS.id
+LEFT JOIN StatusOrdensServicos SOS
+    ON OS.motivocancelamentoid = SOS.id
+LEFT JOIN StatusOrdensServicosTraducao SOST
+    ON SOS.descricao = SOST.[name]
+LEFT JOIN vwOrdensServicosProdutos OSP
+    ON OS.id = OSP.ordemid
+LEFT JOIN Servicos SRV
+    ON OSP.servicoid = SRV.id
+LEFT JOIN dbo.vwWorkTypeMapping WTM
+    ON WTM.SRV_Id = SRV.id
+LEFT JOIN AccountExternalQA ERC 
+    ON OSR.Id = ERC.Id_Atweb 
+LEFT JOIN AccountExternalQA CAOS 
+    ON OSC.Id = CAOS.Id_Atweb 
+LEFT JOIN AccountExternalQA CROS 
+    ON OSR.Id = CROS.Id_Atweb
+
+-------------------------------------------------------------
+-- JOINs ADICIONADOS PARA OS CAMPOS NOVOS
+-------------------------------------------------------------
+
+LEFT JOIN OrdensServicosProdutos OSPO
+    ON OS.id = OSPO.ordemid
+
+-- (1) EstruturasVersionadasCapa ← via OSP.estruturaversionadacapaid
+LEFT JOIN EstruturasVersionadasCapa EVC
+    ON OSPO.estruturaversionadacapaid = EVC.id
+    -- usado para: NumeroDeSerie, DataEmissaoNotaFiscal, NotaFiscalFabrica
+
+-- (2) Produtos ← via OrdensServicosProdutos.produtoid
+LEFT JOIN Produtos P
+    ON OSPO.produtoid = P.id
+    -- usado para: NomeProduto
+
+-- (3) Finalidade ← via OrdensServicos.finalidadeId
+LEFT JOIN FinalidadesOrdensServicosGerais F
+    ON OS.finalidadeId = F.id
+    -- usado para: Finalidade
+
+-- (4) Último apontamento do tipo "Apontamento"
+LEFT JOIN (
+    SELECT TOP 1 *
+    FROM OrdensServicosApontamentos
+    WHERE tipo = 'Apontamento'  -- conforme instrução “tipo Apontamento”
+    ORDER BY inicio DESC
+) OSA
+    ON OSA.ordemid = OS.id
+    -- usado para: Assinatura
+
+-- (5) Defeitos constatados
+LEFT JOIN OrdensServicosDefeitosConstatados OSDC
+    ON OS.id = OSDC.ordemid
+LEFT JOIN DefeitosConstatados DC
+    ON OSDC.defeitoconstatadoid = DC.id
+    -- usado para: DefeitoConstatado
+
+-------------------------------------------------------------
+-- CROSS APPLY ORIGINAL (mantido)
+-------------------------------------------------------------
+CROSS APPLY
+(
+    SELECT
+        CASE
+            WHEN (OSC.Endereco IS NOT NULL AND LTRIM(RTRIM(OSC.Endereco)) <> '') THEN 'Final Customer'
+            WHEN (OSR.Endereco IS NOT NULL AND LTRIM(RTRIM(OSR.Endereco)) <> '') THEN 'Reseller'
+            ELSE NULL
+        END AS VisitingAddress
+) V
+
+GO
+
+
+
+

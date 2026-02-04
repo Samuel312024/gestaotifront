@@ -7,12 +7,12 @@ namespace integracoes.Models
         public int Id { get; set; }
 
         [Required]
-        public string Payload { get; set; } = string.Empty;
+        public string? Payload { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(11)]
-        public string Cpf { get; set; } = string.Empty;
+        public string? Cpf { get; set; } = string.Empty;
 
-        public DateTime ReceivedAt { get; set; }
+        public DateTime? ReceivedAt { get; set; }
     }
 }

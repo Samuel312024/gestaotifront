@@ -15,6 +15,8 @@ namespace integracoes.Data
         public DbSet<ConsultasEnderecos> ConsultasEnderecos { get; set; }
         public DbSet<integracoes.Models.ConsultaPlaca> ConsultasPlacas { get; set; }
         public DbSet<RawData> RawDatas { get; set; }
+        public DbSet<ArquivoUpload> ArquivosUpload { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

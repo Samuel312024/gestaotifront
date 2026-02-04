@@ -33,18 +33,74 @@ namespace integracoes.Migrations
 
                     b.Property<string>("Cpf")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DataUpload")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Payload")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ReceivedAt")
+                    b.Property<DateTime?>("ReceivedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("RawDatas");
+                    b.HasIndex("Cpf")
+                        .IsUnique();
+
+                    b.ToTable("RawDataDto");
+                });
+
+            modelBuilder.Entity("integracoes.Models.ArquivoUpload", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Caminho")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DataProcessamento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DataUpload")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Erro")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Extensao")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NomeOriginal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NomeSalvo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TabelaDestino")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("TamanhoBytes")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ArquivosUpload");
                 });
 
             modelBuilder.Entity("integracoes.Models.ConsultaPlaca", b =>
@@ -153,6 +209,31 @@ namespace integracoes.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ConsultasEnderecos");
+                });
+
+            modelBuilder.Entity("integracoes.Models.RawData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Cpf")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReceivedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RawDatas");
                 });
 #pragma warning restore 612, 618
         }
