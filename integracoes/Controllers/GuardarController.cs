@@ -389,7 +389,10 @@ namespace integracoes.Controllers
             if (formato == "csv")
             {
                 var csv = GenerateCsvFromData(propNames, dicts);
-                return File(Encoding.UTF8.GetBytes(csv), "text/csv", $"{tabela}.csv");
+                var bytes = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(csv)).ToArray();
+
+                return File(bytes, "text/csv", $"{tabela}.csv");
+
             }
 
             // xml
@@ -400,23 +403,31 @@ namespace integracoes.Controllers
         private string GenerateCsvFromData(string[] headers, List<Dictionary<string, object?>> rows)
         {
             var sb = new StringBuilder();
-            sb.AppendLine(string.Join(",", headers.Select(h => EscapeCsv(h))));
+
+            // Cabeçalho igual ao SQL
+            sb.AppendLine(string.Join(";", headers));
 
             foreach (var row in rows)
             {
                 var values = headers.Select(h =>
                 {
                     row.TryGetValue(h, out var v);
-                    if (v == null) return "";
-                    if (v is DateTime dt) return EscapeCsv(dt.ToString("o", CultureInfo.InvariantCulture));
-                    if (v is IFormattable f) return EscapeCsv(f.ToString(null, CultureInfo.InvariantCulture));
-                    return EscapeCsv(Convert.ToString(v, CultureInfo.InvariantCulture) ?? string.Empty);
+
+                    if (v == null)
+                        return "NULL"; // 👈 igual SQL Server
+
+                    if (v is DateTime dt)
+                        return dt.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+                    return EscapeCsv(v.ToString() ?? "NULL");
                 });
-                sb.AppendLine(string.Join(",", values));
+
+                sb.AppendLine(string.Join(";", values));
             }
 
             return sb.ToString();
         }
+
 
         private byte[] SerializeDictionaryCollectionToXml(List<Dictionary<string, object?>> rows, string rootName)
         {
