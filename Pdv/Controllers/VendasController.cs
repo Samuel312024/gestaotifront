@@ -1,6 +1,7 @@
 ﻿using Integracoes.Pdv.DTOs;
 using Integracoes.Pdv.Services;
 using Microsoft.AspNetCore.Mvc;
+using Pdv.DTOs;
 
 [ApiController]
 [Route("api/vendas")]
@@ -26,4 +27,12 @@ public class VendasController : ControllerBase
             return BadRequest(ex.InnerException?.Message ?? ex.Message);
         }
     }
+
+    [HttpPost("scanner")]
+    public async Task<IActionResult> Scanner(ScannerVendaDto dto)
+    {
+        var venda = await _vendaService.AdicionarProdutoPorScannerAsync(dto);
+        return Ok(venda);
+    }
+
 }

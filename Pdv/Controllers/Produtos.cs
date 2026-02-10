@@ -45,4 +45,65 @@ public class ProdutosController : ControllerBase
         await _service.InativarAsync(id);
         return NoContent();
     }
+
+    [HttpPatch("{id}/ativar")]
+    public async Task<IActionResult> Ativar(int id)
+    {
+        try
+        {
+            await _produtoService.AtivarAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPatch("{id}/desativar")]
+    public async Task<IActionResult> Desativar(int id)
+    {
+        try
+        {
+            await _produtoService.DesativarAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpGet("scanner/{codigo}")]
+    public async Task<IActionResult> Scanner(string codigo)
+    {
+        var produto = await _service.BuscarPorCodigoAsync(codigo);
+
+        if (produto == null)
+            return NotFound(new { precisaCadastro = true });
+
+        return Ok(produto);
+    }
+
+    [HttpPost("scanner")]
+    public async Task<IActionResult> Scanner(ScannerProdutoDto dto)
+    {
+        var produto = await _service.BuscarPorCodigoAsync(dto.Codigo);
+
+        if (produto != null)
+            return Ok(produto);
+
+        // Auto-cadastro
+        var novoProduto = await _service.CriarAsync(new CriarProdutoDto
+        {
+            Nome = dto.Nome ?? "Produto não identificado",
+            Preco = dto.Preco ?? 0,
+            Estoque = dto.Estoque ?? 0,
+            Codigo = dto.Codigo
+        });
+
+        return Ok(novoProduto);
+    }
+
+
 }
