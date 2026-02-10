@@ -16,13 +16,16 @@ public class ProdutoService
     public async Task<Produto> CriarAsync(CriarProdutoDto dto)
     {
         if (await _context.Produtos.AnyAsync(p => p.CodigoBarras == dto.Codigo))
-            throw new Exception("Produto já cadastrado.");
+            throw new Exception("Produto já cadastrado com esse código.");
+            _context.Produtos.Where(p => p.Ativo);
 
         var produto = new Produto
         {
             Nome = dto.Nome,
             CodigoBarras = dto.Codigo,
-            PrecoAtual = dto.Preco
+            PrecoAtual = dto.Preco,
+            Estoque = dto.Estoque,
+            Ativo = true
         };
 
         _context.Produtos.Add(produto);
@@ -39,6 +42,29 @@ public class ProdutoService
 
         return produto;
     }
+
+    public async Task AtivarAsync(int id)
+    {
+        var produto = await _context.Produtos.FindAsync(id);
+
+        if (produto == null)
+            throw new KeyNotFoundException("Produto não encontrado.");
+
+        produto.Ativo = true;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DesativarAsync(int id)
+    {
+        var produto = await _context.Produtos.FindAsync(id);
+
+        if (produto == null)
+            throw new KeyNotFoundException("Produto não encontrado.");
+
+        produto.Ativo = false;
+        await _context.SaveChangesAsync();
+    }
+
 
     public async Task AtualizarAsync(int id, AtualizarProdutoDto dto)
     {
@@ -62,6 +88,7 @@ public class ProdutoService
         }
 
         produto.Nome = dto.Nome;
+        produto.Ativo = dto.Ativo;
 
         await _context.SaveChangesAsync();
     }

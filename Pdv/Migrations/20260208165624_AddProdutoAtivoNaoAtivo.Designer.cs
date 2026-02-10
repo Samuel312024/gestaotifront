@@ -4,6 +4,7 @@ using Integracoes.Pdv.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Pdv.Migrations
 {
     [DbContext(typeof(PdvContext))]
-    partial class PdvContextModelSnapshot : ModelSnapshot
+    [Migration("20260208165624_AddProdutoAtivoNaoAtivo")]
+    partial class AddProdutoAtivoNaoAtivo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,10 +40,6 @@ namespace Pdv.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FormaPagamento")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -107,8 +106,6 @@ namespace Pdv.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProdutoId");
-
                     b.ToTable("HistoricoPrecos");
                 });
 
@@ -127,13 +124,7 @@ namespace Pdv.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Estoque")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EstoqueMinimo")
                         .HasColumnType("int");
 
                     b.Property<string>("Nome")
@@ -160,25 +151,9 @@ namespace Pdv.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pdv.Models.HistoricoPreco", b =>
-                {
-                    b.HasOne("Pdv.Models.Produto", "Produto")
-                        .WithMany("HistoricoPrecos")
-                        .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Produto");
-                });
-
             modelBuilder.Entity("Integracoes.Pdv.Models.Venda", b =>
                 {
                     b.Navigation("Itens");
-                });
-
-            modelBuilder.Entity("Pdv.Models.Produto", b =>
-                {
-                    b.Navigation("HistoricoPrecos");
                 });
 #pragma warning restore 612, 618
         }

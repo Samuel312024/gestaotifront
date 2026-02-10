@@ -9,4 +9,5 @@ public class Venda
 
     public List<VendaItem> Itens { get; set; } = new();
     public DateTime DataVenda { get; set; }
+    public string Status { get; internal set; }
 }
