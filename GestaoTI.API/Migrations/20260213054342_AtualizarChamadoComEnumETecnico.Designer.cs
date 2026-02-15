@@ -4,6 +4,7 @@ using GestaoTI.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestaoTI.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260213054342_AtualizarChamadoComEnumETecnico")]
+    partial class AtualizarChamadoComEnumETecnico
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,10 +59,6 @@ namespace GestaoTI.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TecnicoId");
-
-                    b.HasIndex("UsuarioId");
-
                     b.ToTable("Chamados");
                 });
 
@@ -98,23 +97,6 @@ namespace GestaoTI.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("GestaoTI.API.Models.Chamado", b =>
-                {
-                    b.HasOne("GestaoTI.API.Models.Usuario", "Tecnico")
-                        .WithMany()
-                        .HasForeignKey("TecnicoId");
-
-                    b.HasOne("GestaoTI.API.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tecnico");
-
-                    b.Navigation("Usuario");
                 });
 #pragma warning restore 612, 618
         }

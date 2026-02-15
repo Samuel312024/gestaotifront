@@ -12,5 +12,7 @@ namespace GestaoTI.API.Data
         }
 
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Chamado> Chamados { get; set; }
+
     }
 }
