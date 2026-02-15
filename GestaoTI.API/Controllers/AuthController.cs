@@ -31,14 +31,15 @@ namespace GestaoTI.API.Controllers
             {
                 Nome = dto.Nome,
                 Email = dto.Email,
-                SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha)
+                SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
+                Role = dto.Role
 
             };
 
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
-            return Ok("Usuário criado");
+            return Ok("Usuário criado com sucesso");
         }
 
         [HttpPost("login")]

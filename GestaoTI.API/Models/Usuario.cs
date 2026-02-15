@@ -18,11 +18,10 @@ namespace GestaoTI.API.Models
         [Required]
         public string SenhaHash { get; set; }
 
-        public string Perfil { get; set; } = "User";
+        public string Role { get; set; } = "Usuario";
 
         public bool Ativo { get; set; } = true;
 
         public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
-
     }
 }
