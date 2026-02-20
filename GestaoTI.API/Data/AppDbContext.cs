@@ -13,6 +13,8 @@ namespace GestaoTI.API.Data
 
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Chamado> Chamados { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+
 
     }
 }

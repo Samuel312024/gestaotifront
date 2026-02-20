@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GestaoTI.API.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestaoTI.API.Models
 {
@@ -18,9 +19,10 @@ namespace GestaoTI.API.Models
         [Required]
         public string SenhaHash { get; set; }
 
-        public string Role { get; set; } = "Usuario";
+        public UserRole Role { get; set; } = UserRole.User;
 
         public bool Ativo { get; set; } = true;
+
 
         public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
     }

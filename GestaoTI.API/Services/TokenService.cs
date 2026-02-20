@@ -21,8 +21,7 @@ namespace GestaoTI.API.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                 new Claim(ClaimTypes.Name, usuario.Email),
-                new Claim(ClaimTypes.Role, usuario.Role)
-
+                new Claim(ClaimTypes.Role, usuario.Role.ToString())
             };
 
             var key = new SymmetricSecurityKey(
