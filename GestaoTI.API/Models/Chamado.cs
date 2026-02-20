@@ -19,6 +19,8 @@ namespace GestaoTI.API.Models
         [Required]
         public string Descricao { get; set; }
 
+        //public PrioridadeChamado Prioridade { get; set; }
+
         public StatusChamado Status { get; set; } = StatusChamado.Aberto;
 
         public DateTime DataAbertura { get; set; } = DateTime.UtcNow;
@@ -32,6 +34,7 @@ namespace GestaoTI.API.Models
         [ForeignKey(nameof(Tecnico))]
         public int? TecnicoId { get; set; }
         public Usuario Tecnico { get; set; }
+        public string? Prioridade { get; set; }
     }
 
 }

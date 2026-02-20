@@ -1,9 +1,14 @@
 ﻿using GestaoTI.API.Data;
+using GestaoTI.API.Models;
 using GestaoTI.API.Services;
+using GestaoTI.API.Services.Email;
+using GestaoTI.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +35,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             )
         };
     });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+
+
 
 builder.Services.AddScoped<TokenService>();
 
@@ -37,6 +54,24 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<IEmailService, GmailEmailService>();
+builder.Services.Configure<EmailSettings>(
+builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, SendGridEmailService>();
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("forgotPolicy", config =>
+    {
+        config.Window = TimeSpan.FromMinutes(1);
+        config.PermitLimit = 3;
+        config.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+        config.QueueLimit = 0;
+    });
+});
+
+
+
 
 
 var app = builder.Build();
@@ -47,9 +82,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
 }
-
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
+
+
 
 app.MapControllers();
 app.Run();
