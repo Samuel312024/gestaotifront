@@ -9,6 +9,9 @@ import NovoChamado from "./pages/NovoChamado";
 import ListaChamados from "./pages/ListaChamados";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Usuarios from "./pages/Usuarios";
+import NovoUsuario from "./pages/Usuarios";
+import EditarUsuario from "./pages/Usuarios";
 
 function App() {
   return (
@@ -32,6 +35,10 @@ function App() {
         <Route path="/chamados" element={<ListaChamados />} />
         <Route path="/chamados/novo" element={<NovoChamado />} />
         <Route path="/create-user" element={<CreateUser />} />
+        <Route path="/usuarios" element={<Usuarios />} />
+        <Route path="/usuarios/novo" element={<NovoUsuario />} />
+        <Route path="/usuarios/editar/:id" element={<EditarUsuario />} />
+
       </Route>
     </Routes>
   );
