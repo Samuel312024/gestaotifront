@@ -43,21 +43,25 @@ export default function NovoChamado() {
       <form onSubmit={handleSubmit} style={styles.form}>
         <label>Título</label>
         <input
-          name="titulo"
-          value={form.titulo}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
+        name="titulo"
+        value={form.titulo}
+        onChange={handleChange}
+        placeholder="Digite o título do chamado"
+        required
+        style={styles.input}
+      />
+
 
         <label>Descrição</label>
         <textarea
           name="descricao"
           value={form.descricao}
           onChange={handleChange}
+          placeholder="Descreva o problema detalhadamente"
           required
           style={styles.textarea}
         />
+
 
         <label>Prioridade</label>
         <select
@@ -101,17 +105,23 @@ const styles = {
     borderRadius: "15px",
     boxShadow: "0 10px 30px rgba(0,0,0,0.08)"
   },
-  input: {
+    input: {
     padding: "12px",
     borderRadius: "8px",
-    border: "1px solid #ccc"
+    border: "1px solid #1e396b",
+    color: "#000",
+    backgroundColor: "#fff"
   },
+
   textarea: {
     padding: "12px",
     borderRadius: "8px",
-    border: "1px solid #ccc",
-    minHeight: "120px"
+    border: "1px solid #1e396b",
+    minHeight: "120px",
+    color: "#000",
+    backgroundColor: "#fff"
   },
+
   button: {
     marginTop: "10px",
     padding: "14px",

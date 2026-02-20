@@ -2,8 +2,8 @@
 {
     public class ResetPasswordDto
     {
-        public string Token { get; set; }
-        public string NovaSenha { get; set; }
+        public string Token { get; set; } = string.Empty;
+        public string NovaSenha { get; set; } = string.Empty;
     }
 
 }

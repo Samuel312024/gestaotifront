@@ -102,7 +102,7 @@ namespace GestaoTI.API.Controllers
             return Ok(chamado);
         }
 
-        [Authorize(Roles = "Admin,Tecnico")]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}/fechar")]
         public async Task<IActionResult> FecharChamado(int id)
         {

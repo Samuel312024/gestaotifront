@@ -17,7 +17,7 @@ namespace GestaoTI.API.Models
         public string Email { get; set; }
 
         [Required]
-        public string SenhaHash { get; set; }
+        public string SenhaHash { get; set; } = string.Empty;
 
         public UserRole Role { get; set; } = UserRole.User;
 
