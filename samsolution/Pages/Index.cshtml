@@ -1,10 +1,178 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "SAM SOLUTION | Assistência Técnica em Vinhedo e Região";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<body class="bg-gray-950 text-white font-sans scroll-smooth">
+
+    <!-- BOTÃO FLUTUANTE WHATSAPP -->
+    <a href="https://wa.me/5519986093543"
+       class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-full shadow-lg text-lg font-semibold z-50">
+        💬 WhatsApp
+    </a>
+
+    <!-- HERO -->
+    <section class="relative bg-gradient-to-b from-black via-gray-900 to-gray-950 py-28 text-center overflow-hidden">
+
+        <!-- EFEITO DE LUZ -->
+        <div class="absolute inset-0 bg-blue-600 opacity-10 blur-3xl"></div>
+
+        <div class="relative z-10">
+
+            <div class="flex justify-center mb-8">
+                <img src="~/images/samsolution.jpg"
+                     class="w-44 h-44 object-contain drop-shadow-2xl">
+            </div>
+
+          @*   <h1 class="text-4xl md:text-5xl font-bold tracking-wide mb-4">
+                SAM SOLUTION
+            </h1> *@
+
+            <p class="text-xl text-blue-400 mb-6 font-light">
+                Soluções em Tecnologias
+            </p>
+
+            <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-10">
+                Assistência Técnica especializada em computadores, notebooks e PCs gamer.
+                Atendimento profissional em domicílio em Vinhedo e Região.
+            </p>
+
+            <div class="flex justify-center gap-6 flex-wrap">
+                <a href="https://wa.me/5519986093543"
+                   class="bg-green-500 hover:bg-green-600 px-8 py-4 rounded-xl text-lg font-semibold shadow-lg transition">
+                    📲 WhatsApp
+                </a>
+
+                <a href="mailto:samsolution.150824@gmail.com"
+                   class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-xl text-lg font-semibold shadow-lg transition">
+                    ✉ Enviar E-mail
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SERVIÇOS -->
+    <section class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Nossos Serviços</h2>
+
+            <div class="grid md:grid-cols-2 gap-10">
+
+                <div class="bg-gray-900 p-8 rounded-2xl shadow-lg hover:scale-105 transition">
+                    <h3 class="text-xl font-semibold mb-4">🎮 Manutenção de PC Gamer</h3>
+                    <p class="text-gray-400">Instalação, upgrade e otimização para alto desempenho.</p>
+                </div>
+
+                <div class="bg-gray-900 p-8 rounded-2xl shadow-lg hover:scale-105 transition">
+                    <h3 class="text-xl font-semibold mb-4">💼 PCs e Notebooks</h3>
+                    <p class="text-gray-400">Manutenção preventiva e corretiva para uso residencial e empresarial.</p>
+                </div>
+
+                <div class="bg-gray-900 p-8 rounded-2xl shadow-lg hover:scale-105 transition">
+                    <h3 class="text-xl font-semibold mb-4">⚙ Atualização de Hardware e Software</h3>
+                    <p class="text-gray-400">
+                        Upgrade de hardware, formatação, instalação de sistemas operacionais
+                        e softwares essenciais para melhor desempenho.
+                    </p>
+
+                </div>
+
+                <div class="bg-gray-900 p-8 rounded-2xl shadow-lg hover:scale-105 transition">
+                    <h3 class="text-xl font-semibold mb-4">🧹 Limpeza Técnica</h3>
+                    <p class="text-gray-400">Limpeza interna completa para melhor desempenho e durabilidade.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ÁREA DE ATENDIMENTO -->
+    <section class="py-20 bg-gray-900 text-center">
+        <h2 class="text-3xl font-bold mb-8">Área de Atendimento</h2>
+        <p class="text-lg text-gray-400 max-w-3xl mx-auto">
+            Atendemos em Vinhedo, Valinhos, Louveira, Campinas e Itatiba.
+            Atendimento em domicílio com agendamento rápido.
+        </p>
+    </section>
+
+    <!-- FORMULÁRIO DE CONTATO -->
+    <section class="py-20 px-6 bg-gray-950">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-10">Fale Conosco</h2>
+            @if (Model.EmailEnviado)
+            {
+                <div class="mb-6 p-4 rounded-xl bg-green-600 text-white text-center font-semibold shadow-lg">
+                    ✅ Sua mensagem foi enviada com sucesso! Entraremos em contato em breve.
+                </div>
+            }
+
+
+            <form method="post" asp-page-handler="Enviar" class="space-y-6">
+
+
+                <input type="text" name="Nome" placeholder="Seu Nome" required
+                       class="w-full p-4 rounded-xl bg-gray-800 border border-gray-700 text-white">
+
+                <input type="email" name="Email" placeholder="Seu E-mail" required
+                       class="w-full p-4 rounded-xl bg-gray-800 border border-gray-700 text-white">
+
+                <textarea name="Mensagem" rows="4" placeholder="Digite sua mensagem" required
+                          class="w-full p-4 rounded-xl bg-gray-800 border border-gray-700 text-white"></textarea>
+
+
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 p-4 rounded-xl font-semibold transition">
+                    Enviar Mensagem
+                </button>
+
+            </form>
+        </div>
+    </section>
+
+    <footer class="bg-black text-gray-400 py-10">
+
+        <div class="max-w-6xl mx-auto px-6 text-center">
+
+            @* <h3 class="text-2xl font-bold text-white mb-4">SAM SOLUTION</h3> *@
+            @* <p class="mb-6 text-gray-500">
+                Assistência Técnica em Vinhedo e Região
+            </p> *@
+
+            <div class="flex justify-center gap-8 text-lg mb-6 flex-wrap">
+
+                <a href="https://instagram.com/seuinstagram"
+                   target="_blank"
+                   class="hover:text-pink-500 transition">
+                    📸 Instagram
+                </a>
+
+                <a href="https://www.linkedin.com/company/sam-solutions-technology"
+                   target="_blank"
+                   class="hover:text-blue-400 transition">
+                    💼 LinkedIn
+                </a>
+
+
+                <a href="https://wa.me/5519986093543"
+                   target="_blank"
+                   class="hover:text-green-500 transition">
+                    💬 WhatsApp
+                </a>
+
+                <a href="mailto:samsolution.150824@gmail.com"
+                   class="hover:text-blue-300 transition">
+                    ✉ E-mail
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+</body>
