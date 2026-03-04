@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pdv", "Pdv\Pdv.csproj", "{F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestaoTI.API", "GestaoTI.API\GestaoTI.API.csproj", "{375DBEA4-E334-47D3-BCF4-C2BB07E8E563}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "samsolution", "samsolution\samsolution.csproj", "{D939B774-2F7C-4164-83FC-D411D528BCDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{375DBEA4-E334-47D3-BCF4-C2BB07E8E563}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{375DBEA4-E334-47D3-BCF4-C2BB07E8E563}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{375DBEA4-E334-47D3-BCF4-C2BB07E8E563}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D939B774-2F7C-4164-83FC-D411D528BCDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D939B774-2F7C-4164-83FC-D411D528BCDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D939B774-2F7C-4164-83FC-D411D528BCDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D939B774-2F7C-4164-83FC-D411D528BCDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
